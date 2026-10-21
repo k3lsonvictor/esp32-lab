@@ -157,4 +157,3 @@ export const blinkLesson = lessonSchema.parse({
     },
   ],
 });
-export const lessons = [blinkLesson];

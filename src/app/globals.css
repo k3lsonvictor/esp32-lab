@@ -1,4 +1,37 @@
 @import "tailwindcss";
+.catalog > .lesson-card + .lesson-card {
+  margin-top: 18px;
+}
+.button-demo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 24px;
+  border-top: 1px solid var(--line);
+  background: #f7f7ee;
+}
+.button-demo button {
+  background: #fffdf7;
+}
+.button-demo button[aria-pressed="true"] {
+  background: #e5ecd9;
+  border-color: #789569;
+}
+.button-demo p {
+  flex: 1;
+  min-width: 180px;
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.7;
+  color: #6d7b70;
+}
+.led-off {
+  opacity: 0.32;
+}
+.led-on {
+  filter: drop-shadow(0 0 14px #ff4638);
+}
 .supplementary-materials {
   margin: 36px 0 40px;
   border-top: 1px solid var(--line);

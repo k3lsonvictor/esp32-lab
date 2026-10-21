@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { blinkLesson as lesson } from "../../content/lessons/blink-led";
+import { buttonLesson } from "../../content/lessons/button-led";
 const storage = new Map<string, string>();
 vi.stubGlobal("localStorage", {
   getItem: (k: string) => storage.get(k) ?? null,
@@ -9,6 +10,34 @@ vi.stubGlobal("localStorage", {
 vi.stubGlobal("window", { localStorage: globalThis.localStorage });
 const { useLessonStore } = await import("./store");
 describe("Persistência e ações de progresso", () => {
+  it("mantém o progresso e o reinício independentes por aula", async () => {
+    useLessonStore.setState({ progress: {} });
+    const s = useLessonStore.getState();
+    s.move(lesson, 4);
+    s.answer(lesson, "resistor", 1);
+    s.move(buttonLesson, 7);
+    s.answer(buttonLesson, "pullup", 1);
+    s.answer(buttonLesson, "contacts", 2);
+    s.finish(buttonLesson);
+    const saved = storage.get("esp32-lab-progress-v1")!;
+    useLessonStore.setState({ progress: {} });
+    storage.set("esp32-lab-progress-v1", saved);
+    await useLessonStore.persist.rehydrate();
+    expect(useLessonStore.getState().progress[buttonLesson.id].completed).toBe(
+      true,
+    );
+    useLessonStore.getState().reset(buttonLesson.id);
+    expect(useLessonStore.getState().progress[lesson.id]).toEqual({
+      step: 4,
+      answers: { resistor: 1 },
+      completed: false,
+    });
+    expect(useLessonStore.getState().progress[buttonLesson.id]).toEqual({
+      step: 0,
+      answers: {},
+      completed: false,
+    });
+  });
   beforeEach(() => {
     storage.clear();
     useLessonStore.setState({ progress: {} });

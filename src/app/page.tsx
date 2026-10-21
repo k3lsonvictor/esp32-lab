@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Zap, MousePointer2 } from "lucide-react";
-import { blinkLesson, lessons } from "../content/lessons/blink-led";
+import { blinkLesson } from "../content/lessons/blink-led";
+import { lessons } from "../content/lessons";
 import { CircuitCanvas } from "../components/circuit/CircuitCanvas";
 import { LessonCard } from "../components/lesson/LessonCard";
 export default function Home() {
@@ -66,7 +67,9 @@ export default function Home() {
               <p className="eyebrow">SUA JORNADA COMEÇA AQUI</p>
               <h2>Pequenos passos. Descobertas reais.</h2>
             </div>
-            <span>01 projeto disponível</span>
+            <span>
+              {String(lessons.length).padStart(2, "0")} projetos disponíveis
+            </span>
           </div>
           {lessons.map((lesson) => (
             <LessonCard key={lesson.id} lesson={lesson} />

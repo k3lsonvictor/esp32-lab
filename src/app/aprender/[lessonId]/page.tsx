@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { lessons } from "../../../content/lessons/blink-led";
+import { lessons } from "../../../content/lessons";
 import { LessonPlayer } from "../../../components/lesson/LessonPlayer";
 export function generateStaticParams() {
   return lessons.map((l) => ({ lessonId: l.id }));

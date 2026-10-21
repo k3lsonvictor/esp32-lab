@@ -7,12 +7,15 @@ import { Breadboard } from "./parts/Breadboard";
 import { LED } from "./parts/LED";
 import { Resistor } from "./parts/Resistor";
 import { Wire } from "./Wire";
+import { PushButton } from "./parts/PushButton";
 type Props = {
   parts: Lesson["components"];
   connections: Lesson["connections"];
   highlight: string[];
   pins: string[];
   blink?: boolean;
+  buttonPressed?: boolean;
+  ledOn?: boolean;
 };
 export function CircuitCanvas({
   parts,
@@ -20,6 +23,8 @@ export function CircuitCanvas({
   highlight,
   pins,
   blink,
+  buttonPressed,
+  ledOn,
 }: Props) {
   const reduced = useReducedMotion();
   return (
@@ -27,7 +32,7 @@ export function CircuitCanvas({
       className="circuit-svg"
       viewBox="0 0 790 510"
       role="img"
-      aria-label={`Circuito: ${parts.map((p) => p.id).join(", ")}. ${connections.length} fios conectados.`}
+      aria-label={`Circuito: ${parts.map((p) => p.id).join(", ")}. ${connections.length} fios conectados.${ledOn !== undefined ? ` LED ${ledOn ? "aceso" : "apagado"}. Botão ${buttonPressed ? "pressionado" : "solto"}.` : ""}`}
     >
       <defs>
         <linearGradient id="metal" x2="1" y2="1">
@@ -58,8 +63,10 @@ export function CircuitCanvas({
               <Breadboard />
             ) : part.kind === "resistor" ? (
               <Resistor />
+            ) : part.kind === "button" ? (
+              <PushButton pressed={buttonPressed} />
             ) : (
-              <LED blink={blink} />
+              <LED blink={blink} on={ledOn} />
             )}
           </g>
         </motion.g>

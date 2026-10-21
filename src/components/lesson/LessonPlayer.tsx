@@ -17,7 +17,8 @@ import {
   clampStep,
   sceneFor,
 } from "../../features/lessons/engine";
-import { CircuitCanvas } from "../circuit/CircuitCanvas";
+import { CircuitDemo } from "./CircuitDemo";
+import { lessons } from "../../content/lessons";
 import { CodeViewer } from "./CodeViewer";
 import { QuizStep } from "./QuizStep";
 import { SupplementaryMaterials } from "./SupplementaryMaterials";
@@ -32,6 +33,9 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
   const index = clampStep(lesson, progress?.step ?? 0);
   const { step, parts, connections } = sceneFor(lesson, index);
   const completed = progress?.completed ?? false;
+  const nextLesson = lessons.find(
+    (l) => l.projectNumber > lesson.projectNumber,
+  );
   const percent = completed
     ? 100
     : Math.round((index / lesson.steps.length) * 100);
@@ -52,10 +56,15 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
       <main className="lesson-shell">
         <div className="lesson-heading">
           <div>
-            <p className="eyebrow">TRILHA ESSENCIAL · PROJETO 01</p>
+            <p className="eyebrow">
+              TRILHA ESSENCIAL · PROJETO{" "}
+              {String(lesson.projectNumber).padStart(2, "0")}
+            </p>
             <h1>{lesson.title}</h1>
           </div>
-          <span className="badge">Iniciante · 15 min</span>
+          <span className="badge">
+            {lesson.difficulty} · {lesson.durationMinutes} min
+          </span>
         </div>
         <div className="progress-row">
           <div
@@ -75,19 +84,25 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
             <div className="success-icon">
               <PartyPopper size={40} />
             </div>
-            <p className="eyebrow">PRIMEIRO PROJETO CONCLUÍDO</p>
+            <p className="eyebrow">
+              PROJETO {String(lesson.projectNumber).padStart(2, "0")} CONCLUÍDO
+            </p>
             <h2>
-              Uma pequena luz.
-              <br />
-              Uma grande conquista.
+              {lesson.completion?.title ??
+                "Uma pequena luz. Uma grande conquista."}
             </h2>
             <p>
-              Você conhece os componentes, montou o caminho da corrente e
-              entendeu o código do seu primeiro LED.
+              {lesson.completion?.text ??
+                "Você conhece os componentes, montou o caminho da corrente e entendeu o código do seu primeiro LED."}
             </p>
             <button className="primary" onClick={() => store.reset(lesson.id)}>
               Refazer a experiência <RotateCcw size={17} />
             </button>
+            {nextLesson && (
+              <Link className="primary" href={`/aprender/${nextLesson.id}`}>
+                Próximo projeto <ArrowRight size={17} />
+              </Link>
+            )}
             <Link href="/">Voltar ao início</Link>
           </section>
         ) : (
@@ -100,7 +115,9 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
                   </span>
                   <span>VISTA SUPERIOR · SVG</span>
                 </div>
-                <CircuitCanvas
+                <CircuitDemo
+                  key={`${lesson.id}-${index}`}
+                  interactive={step.buttonDemo}
                   parts={parts}
                   connections={connections}
                   highlight={step.highlight}
@@ -117,7 +134,9 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
                   <span>
                     {step.blink
                       ? "Animação didática · 1 s ligado / 1 s desligado"
-                      : "Explore, conecte, aprenda."}
+                      : step.buttonDemo
+                        ? "Demonstração interativa · sem firmware"
+                        : "Explore, conecte, aprenda."}
                   </span>
                 </div>
               </section>

@@ -15,6 +15,9 @@ export const lessonSchema = z
     title: z.string(),
     description: z.string(),
     difficulty: z.string(),
+    projectNumber: z.number().int().positive().default(1),
+    durationMinutes: z.number().int().positive().default(15),
+    completion: z.object({ title: z.string(), text: z.string() }).optional(),
     materials: z
       .array(
         z.object({
@@ -30,7 +33,7 @@ export const lessonSchema = z
     components: z.array(
       z.object({
         id: z.string(),
-        kind: z.enum(["esp32", "breadboard", "led", "resistor"]),
+        kind: z.enum(["esp32", "breadboard", "led", "resistor", "button"]),
         x: z.number(),
         y: z.number(),
       }),
@@ -57,6 +60,7 @@ export const lessonSchema = z
           code: z.string().optional(),
           questions: z.array(question).optional(),
           blink: z.boolean().optional(),
+          buttonDemo: z.boolean().optional(),
         }),
       )
       .min(1),

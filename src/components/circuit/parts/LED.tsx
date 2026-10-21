@@ -1,4 +1,4 @@
-export function LED({ blink = false }: { blink?: boolean }) {
+export function LED({ blink = false, on }: { blink?: boolean; on?: boolean }) {
   return (
     <g>
       <path
@@ -7,7 +7,17 @@ export function LED({ blink = false }: { blink?: boolean }) {
         stroke="#8d9696"
         strokeWidth="3"
       />
-      <g className={blink ? "led-blink" : undefined}>
+      <g
+        className={
+          blink
+            ? "led-blink"
+            : on === true
+              ? "led-on"
+              : on === false
+                ? "led-off"
+                : undefined
+        }
+      >
         <circle cx="28" cy="45" r="25" fill="#fa594a" opacity=".12" />
         <path
           d="M12 50V34a16 16 0 0 1 32 0v16z"

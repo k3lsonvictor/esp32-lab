@@ -52,6 +52,12 @@ export const terminals: Record<string, Record<string, Point>> = {
   ),
   resistor: { pin1: { x: 0, y: 0 }, pin2: { x: 0, y: 100 } },
   led: { anode: { x: 0, y: 35 }, cathode: { x: 0, y: 75 } },
+  button: {
+    a1: { x: 0, y: 0 },
+    a2: { x: 0, y: 40 },
+    b1: { x: 44, y: 0 },
+    b2: { x: 44, y: 40 },
+  },
 };
 export function breadboardNet(pin: string) {
   const match = /^([a-j])([1-9]|1[0-5])$/.exec(pin);
