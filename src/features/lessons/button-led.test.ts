@@ -39,9 +39,13 @@ function connected(a: string, b: string, pressed: boolean) {
   return visited.has(b);
 }
 describe("Segundo projeto: LED com botão", () => {
-  it("registra duas aulas distintas com oito etapas e metadados próprios", () => {
-    expect(lessons.map((l) => l.id)).toEqual(["primeiro-led", "led-com-botao"]);
-    expect(new Set(lessons.map((l) => l.projectNumber)).size).toBe(2);
+  it("registra aulas distintas com oito etapas e metadados próprios", () => {
+    expect(lessons.map((l) => l.id)).toEqual([
+      "primeiro-led",
+      "led-com-botao",
+      "led-interruptor",
+    ]);
+    expect(new Set(lessons.map((l) => l.projectNumber)).size).toBe(3);
     expect(lessonSchema.safeParse(lesson).success).toBe(true);
     expect(lesson.steps).toHaveLength(8);
     expect(lesson.projectNumber).toBe(2);

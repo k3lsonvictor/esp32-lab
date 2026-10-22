@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-Abra http://localhost:3000. A primeira aula fica em `/aprender/primeiro-led` e a segunda em `/aprender/led-com-botao`.
+Abra http://localhost:3000. Aulas: `/aprender/primeiro-led`, `/aprender/led-com-botao` e `/aprender/led-interruptor`.
 
 ```sh
 npm run lint
@@ -51,9 +51,17 @@ O pull-up interno mantém HIGH em repouso; o contato fechado leva o GPIO ao GND 
 
 Nas etapas 6 e 7, um controle acessível alterna a demonstração entre pressionado e solto, mostra a leitura e altera o LED. Ao mudar de etapa, a demonstração volta ao repouso. Nenhum firmware é executado. O exemplo acompanha o nível do botão e não conta cliques; para aplicações que contam ou alternam por clique, trate o bounce dos contatos. Progresso e respostas ficam salvos separadamente para cada aula.
 
+## Projeto 03 — Um clique para ligar, outro para desligar
+
+Oito etapas reutilizam a montagem da segunda aula para ensinar memória em uma variável `bool`, detecção da transição HIGH → LOW e debounce com `millis()`. O LED começa apagado, alterna uma vez por novo pressionamento estável e mantém o estado ao soltar. A variável está em RAM; reiniciar o ESP32 volta ao estado inicial.
+
+O código completo da etapa 7 aceita uma mudança apenas após 50 ms de leitura estável, sem `delay`. A soltura também deve estabilizar para preparar outro pressionamento. O intervalo é didático e deve ser ajustado ao botão real. A comparação usa subtração entre tempos `unsigned long`, adequada à virada de `millis()`. Referência: [Debounce — Arduino](https://docs.arduino.cc/built-in-examples/digital/Debounce/).
+
+O campo `buttonDemo` aceita `true` para acompanhamento momentâneo ou `"toggle"` para alternância com debounce. O modelo puro em `features/lessons/button-demo.ts` é usado pela demonstração e pelos testes; não executa firmware. As etapas 1, 4, 6 e 7 oferecem a interação, com indicação do nível lido, estado da luz e quantidade de pressionamentos confirmados. Trocar de etapa ou reiniciar a lição limpa a demonstração. Código e perguntas ficam na mesma estrutura declarativa das outras aulas.
+
 ## Verificações e limites
 
-16 testes automatizados cobrem o motor, validação de terminais, posicionamento das pernas, redes da protoboard, contatos do botão abertos e fechados, respostas, limites de navegação, persistência e reinício independente por aula. TypeScript, ESLint e build de produção foram executados. As rotas inicial e das aulas são verificadas com HTTP 200; IDs inexistentes retornam 404.
+25 testes automatizados cobrem o motor, validação de terminais, posicionamento das pernas, redes da protoboard, contatos do botão abertos e fechados, debounce, respostas, limites de navegação, persistência e reinício independente por aula. TypeScript, ESLint e build de produção foram executados. As rotas inicial e das aulas são verificadas com HTTP 200; IDs inexistentes retornam 404.
 
 A revisão visual em navegador não foi realizada nesta sessão, pois não havia navegador conectado. O layout inclui breakpoints para celular e tablet, mas precisa dessa conferência visual em dispositivos reais.
 

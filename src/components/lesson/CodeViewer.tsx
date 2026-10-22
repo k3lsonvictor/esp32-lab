@@ -15,7 +15,7 @@ export function CodeViewer({ code }: { code: string }) {
     <div className="code-viewer">
       <div>
         <span>
-          blink.ino <small>Arduino</small>
+          programa.ino <small>Arduino</small>
         </span>
         <button onClick={copy}>
           {status === "Copiado" ? <Check size={14} /> : <Copy size={14} />}{" "}

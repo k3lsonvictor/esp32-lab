@@ -25,6 +25,11 @@ import { SupplementaryMaterials } from "./SupplementaryMaterials";
 export function LessonPlayer({ lesson }: { lesson: Lesson }) {
   const store = useLessonStore();
   const [ready, setReady] = useState(false);
+  const [demoRevision, setDemoRevision] = useState(0);
+  const resetLesson = () => {
+    store.reset(lesson.id);
+    setDemoRevision((value) => value + 1);
+  };
   useEffect(() => {
     void useLessonStore.persist?.rehydrate();
     queueMicrotask(() => setReady(true));
@@ -49,7 +54,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
           esp32<span>lab</span>
           <i />
         </Link>
-        <button className="text-button" onClick={() => store.reset(lesson.id)}>
+        <button className="text-button" onClick={resetLesson}>
           <RotateCcw size={15} /> Reiniciar
         </button>
       </header>
@@ -95,7 +100,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
               {lesson.completion?.text ??
                 "Você conhece os componentes, montou o caminho da corrente e entendeu o código do seu primeiro LED."}
             </p>
-            <button className="primary" onClick={() => store.reset(lesson.id)}>
+            <button className="primary" onClick={resetLesson}>
               Refazer a experiência <RotateCcw size={17} />
             </button>
             {nextLesson && (
@@ -116,7 +121,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
                   <span>VISTA SUPERIOR · SVG</span>
                 </div>
                 <CircuitDemo
-                  key={`${lesson.id}-${index}`}
+                  key={`${lesson.id}-${index}-${demoRevision}`}
                   interactive={step.buttonDemo}
                   parts={parts}
                   connections={connections}

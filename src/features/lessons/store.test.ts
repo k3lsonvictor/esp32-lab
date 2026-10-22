@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { blinkLesson as lesson } from "../../content/lessons/blink-led";
 import { buttonLesson } from "../../content/lessons/button-led";
+import { toggleLesson } from "../../content/lessons/toggle-led";
 const storage = new Map<string, string>();
 vi.stubGlobal("localStorage", {
   getItem: (k: string) => storage.get(k) ?? null,
@@ -19,6 +20,10 @@ describe("Persistência e ações de progresso", () => {
     s.answer(buttonLesson, "pullup", 1);
     s.answer(buttonLesson, "contacts", 2);
     s.finish(buttonLesson);
+    s.move(toggleLesson, 7);
+    s.answer(toggleLesson, "release", 1);
+    s.answer(toggleLesson, "debounce", 2);
+    s.finish(toggleLesson);
     const saved = storage.get("esp32-lab-progress-v1")!;
     useLessonStore.setState({ progress: {} });
     storage.set("esp32-lab-progress-v1", saved);
@@ -27,6 +32,11 @@ describe("Persistência e ações de progresso", () => {
       true,
     );
     useLessonStore.getState().reset(buttonLesson.id);
+    expect(useLessonStore.getState().progress[toggleLesson.id]).toEqual({
+      step: 7,
+      answers: { release: 1, debounce: 2 },
+      completed: true,
+    });
     expect(useLessonStore.getState().progress[lesson.id]).toEqual({
       step: 4,
       answers: { resistor: 1 },

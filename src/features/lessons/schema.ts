@@ -60,7 +60,7 @@ export const lessonSchema = z
           code: z.string().optional(),
           questions: z.array(question).optional(),
           blink: z.boolean().optional(),
-          buttonDemo: z.boolean().optional(),
+          buttonDemo: z.union([z.boolean(), z.literal("toggle")]).optional(),
         }),
       )
       .min(1),
@@ -84,6 +84,18 @@ export const lessonSchema = z
       }
     }
     for (const s of lesson.steps) {
+      if (
+        s.buttonDemo &&
+        (!["button", "led"].every((kind) =>
+          lesson.components.some(
+            (p) => p.kind === kind && s.visible.includes(p.id),
+          ),
+        ) ||
+          s.blink)
+      )
+        issue(
+          "Demonstração de botão requer botão e LED visíveis, sem animação de piscar",
+        );
       for (const id of [...s.visible, ...s.highlight])
         if (!ids.includes(id)) issue(`Componente inválido: ${id}`);
       for (const id of s.wires) {

@@ -1,19 +1,46 @@
 "use client";
-import { useState, type ComponentProps } from "react";
+import { useReducer, useEffect, type ComponentProps } from "react";
 import { Hand } from "lucide-react";
 import { CircuitCanvas } from "../circuit/CircuitCanvas";
+import {
+  DEBOUNCE_MS,
+  initialButtonDemo,
+  sampleButton,
+} from "../../features/lessons/button-demo";
 
 export function CircuitDemo({
   interactive,
   ...scene
-}: ComponentProps<typeof CircuitCanvas> & { interactive?: boolean }) {
-  const [pressed, setPressed] = useState(false);
+}: ComponentProps<typeof CircuitCanvas> & {
+  interactive?: boolean | "toggle";
+}) {
+  const [state, sample] = useReducer(sampleButton, initialButtonDemo);
+  const pressed = state.rawPressed;
+  const toggle = interactive === "toggle";
+  const ledOn = toggle ? state.ledOn : pressed;
+  useEffect(() => {
+    if (!toggle || state.rawPressed === state.stablePressed) return;
+    const remaining = Math.max(
+      0,
+      DEBOUNCE_MS - (performance.now() - state.changedAt),
+    );
+    const timer = setTimeout(
+      () =>
+        sample({
+          pressed: state.rawPressed,
+          now: performance.now(),
+          expectedChange: state.changedAt,
+        }),
+      remaining + 1,
+    );
+    return () => clearTimeout(timer);
+  }, [toggle, state.rawPressed, state.stablePressed, state.changedAt]);
   return (
     <>
       <CircuitCanvas
         {...scene}
         buttonPressed={pressed}
-        ledOn={interactive ? pressed : undefined}
+        ledOn={interactive ? ledOn : undefined}
       />
       {interactive && (
         <div className="button-demo">
@@ -21,20 +48,23 @@ export function CircuitDemo({
             type="button"
             className="secondary"
             aria-pressed={pressed}
-            onClick={() => setPressed((p) => !p)}
+            onClick={() =>
+              sample({ pressed: !pressed, now: performance.now() })
+            }
           >
             <Hand size={17} aria-hidden="true" />
             {pressed ? "Soltar botão" : "Pressionar botão"}
           </button>
           <p role="status">
             <strong>
-              {pressed
-                ? "GPIO 22: LOW (0) → LED aceso"
-                : "GPIO 22: HIGH (1) → LED apagado"}
+              GPIO 22: {pressed ? "LOW (0)" : "HIGH (1)"} → LED{" "}
+              {ledOn ? "aceso" : "apagado"}
             </strong>
             <br />
-            Demonstração didática. O controle alterna entre pressionado e solto;
-            nenhum firmware é executado.
+            {toggle
+              ? `${state.presses} pressionamento(s) confirmado(s). Aguarde 50 ms entre pressionar e soltar. Soltar mantém a luz; o próximo pressionamento a alterna. `
+              : "O controle alterna entre pressionado e solto. "}
+            Demonstração didática; nenhum firmware é executado.
           </p>
         </div>
       )}
