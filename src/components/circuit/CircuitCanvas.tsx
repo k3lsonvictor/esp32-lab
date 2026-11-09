@@ -8,6 +8,7 @@ import { LED } from "./parts/LED";
 import { Resistor } from "./parts/Resistor";
 import { Wire } from "./Wire";
 import { PushButton } from "./parts/PushButton";
+import { TFTDisplay } from "./parts/TFTDisplay";
 type Props = {
   parts: Lesson["components"];
   connections: Lesson["connections"];
@@ -16,6 +17,7 @@ type Props = {
   blink?: boolean;
   buttonPressed?: boolean;
   ledOn?: boolean;
+  displayFrame?: string;
 };
 export function CircuitCanvas({
   parts,
@@ -25,6 +27,7 @@ export function CircuitCanvas({
   blink,
   buttonPressed,
   ledOn,
+  displayFrame,
 }: Props) {
   const reduced = useReducedMotion();
   return (
@@ -65,6 +68,8 @@ export function CircuitCanvas({
               <Resistor />
             ) : part.kind === "button" ? (
               <PushButton pressed={buttonPressed} />
+            ) : part.kind === "tft" ? (
+              <TFTDisplay framePath={displayFrame} />
             ) : (
               <LED blink={blink} on={ledOn} />
             )}

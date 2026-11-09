@@ -22,6 +22,8 @@ import { lessons } from "../../content/lessons";
 import { CodeViewer } from "./CodeViewer";
 import { QuizStep } from "./QuizStep";
 import { SupplementaryMaterials } from "./SupplementaryMaterials";
+import { ProjectFiles } from "./ProjectFiles";
+import { WiringTable } from "./WiringTable";
 export function LessonPlayer({ lesson }: { lesson: Lesson }) {
   const store = useLessonStore();
   const [ready, setReady] = useState(false);
@@ -62,8 +64,9 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
         <div className="lesson-heading">
           <div>
             <p className="eyebrow">
-              TRILHA ESSENCIAL · PROJETO{" "}
-              {String(lesson.projectNumber).padStart(2, "0")}
+              {lesson.special
+                ? "PROJETO ESPECIAL · CRIATIVIDADE NA BANCADA"
+                : `TRILHA ESSENCIAL · PROJETO ${String(lesson.projectNumber).padStart(2, "0")}`}
             </p>
             <h1>{lesson.title}</h1>
           </div>
@@ -90,7 +93,9 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
               <PartyPopper size={40} />
             </div>
             <p className="eyebrow">
-              PROJETO {String(lesson.projectNumber).padStart(2, "0")} CONCLUÍDO
+              {lesson.special
+                ? "PROJETO ESPECIAL CONCLUÍDO"
+                : `PROJETO ${String(lesson.projectNumber).padStart(2, "0")} CONCLUÍDO`}
             </p>
             <h2>
               {lesson.completion?.title ??
@@ -123,6 +128,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
                 <CircuitDemo
                   key={`${lesson.id}-${index}-${demoRevision}`}
                   interactive={step.buttonDemo}
+                  faceDemo={step.faceDemo}
                   parts={parts}
                   connections={connections}
                   highlight={step.highlight}
@@ -139,7 +145,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
                   <span>
                     {step.blink
                       ? "Animação didática · 1 s ligado / 1 s desligado"
-                      : step.buttonDemo
+                      : step.buttonDemo || step.faceDemo
                         ? "Demonstração interativa · sem firmware"
                         : "Explore, conecte, aprenda."}
                   </span>
@@ -153,6 +159,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
                 <span className="step-tag">{step.eyebrow}</span>
                 <h2>{step.title}</h2>
                 <p className="step-text">{step.text}</p>
+                {step.showWiring && <WiringTable rows={lesson.wiring} />}
                 {step.code && <CodeViewer code={step.code} />}
                 {step.questions && (
                   <QuizStep
@@ -214,6 +221,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
           </>
         )}
         <SupplementaryMaterials materials={lesson.materials} />
+        <ProjectFiles downloads={lesson.downloads} />
       </main>
     </>
   );

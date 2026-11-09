@@ -41,6 +41,12 @@ export const hole = (column: string, row: number): Point => ({
   y: 55 + (row - 1) * 20,
 });
 export const terminals: Record<string, Record<string, Point>> = {
+  tft: Object.fromEntries(
+    ["GND", "VCC", "SCK", "MOSI", "RST", "DC", "CS", "BL"].map((pin, i) => [
+      pin,
+      { x: 0, y: 45 + i * 40 },
+    ]),
+  ),
   esp32: Object.fromEntries([
     ...leftPins.map((p, i) => [p, { x: 0, y: 45 + i * 20 }]),
     ...rightPins.map((p, i) => [p, { x: 180, y: 45 + i * 20 }]),

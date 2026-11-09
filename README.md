@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-Abra http://localhost:3000. Aulas: `/aprender/primeiro-led`, `/aprender/led-com-botao` e `/aprender/led-interruptor`.
+Abra http://localhost:3000. Aulas: `/aprender/primeiro-led`, `/aprender/led-com-botao`, `/aprender/led-interruptor` e o projeto especial `/aprender/carinha-lcd`.
 
 ```sh
 npm run lint
@@ -59,9 +59,23 @@ O código completo da etapa 7 aceita uma mudança apenas após 50 ms de leitura 
 
 O campo `buttonDemo` aceita `true` para acompanhamento momentâneo ou `"toggle"` para alternância com debounce. O modelo puro em `features/lessons/button-demo.ts` é usado pela demonstração e pelos testes; não executa firmware. As etapas 1, 4, 6 e 7 oferecem a interação, com indicação do nível lido, estado da luz e quantidade de pressionamentos confirmados. Trocar de etapa ou reiniciar a lição limpa a demonstração. Código e perguntas ficam na mesma estrutura declarativa das outras aulas.
 
+## Projeto especial — Dê uma carinha ao seu ESP32
+
+Dez etapas usam os arquivos `sketch_sep24a.ino`, `content.h`, `laugh.h` e `angry.h` fornecidos como referência. O controlador indicado é **ST7735, LCD TFT SPI**, com tela configurada em 128×160 na rotação 0. Os desenhos são bitmaps de **128×64**, exibidos em (0, 48). Há 76 quadros em content, 75 em laugh e 75 em angry; todos têm duração prevista de 100 ms. As pausas após cada expressão são de 500, 500 e 1000 ms, totalizando um ciclo ideal de 24,6 s.
+
+O renderer inclui um módulo TFT SVG com terminais identificados. As sete ligações aparecem em etapas: 3V3→VCC, GND→GND, GPIO18→SCK, GPIO23→MOSI/SDA, GPIO5→CS, GPIO4→RST e GPIO2→DC. O MISO não é usado. GPIO2 e GPIO5 são pinos de strapping no ESP32 clássico; confirme que o módulo não impõe níveis de boot incompatíveis. Referências: [SPI do Arduino-ESP32](https://docs.espressif.com/projects/arduino-esp32/en/latest/api/spi.html), [construtor ST7735 da Adafruit](https://github.com/adafruit/Adafruit-ST7735-Library/blob/master/Adafruit_ST7735.cpp) e [pinagem do breakout Adafruit](https://learn.adafruit.com/1-8-tft-display/breakout-pinouts).
+
+**Módulo informado pelo usuário:** LCD TFT ST7735S de 1,8″, 128×160, SPI, anunciado para alimentação de 3,3 V/5 V. A aula usa a opção de alimentação em 3,3 V e mantém a lógica SPI em 3,3 V. Compatibilidade de alimentação com 5 V não implica tolerância dos GPIOs do ESP32 a 5 V. A descrição comercial ainda não identifica fabricante, ordem física dos pinos ou circuito de backlight. A ligação BL/LED/LITE permanece dependente da placa, sem um jumper genérico; a prévia pressupõe iluminação habilitada. INITR_BLACKTAB segue o sketch fornecido e deve corresponder à variante real, não à cor da placa.
+
+Os headers em `public/projetos/carinha-esp32/` são cópias idênticas aos originais. O sketch adaptado remove a sequência de `+` inválidos encontrada no final do original, explicita `SPI.begin`, começa em 16 MHz (a referência usa 40 MHz), verifica dimensões com `static_assert` e reúne as três rotinas de reprodução numa função. O código exibido é o mesmo arquivo `.ino` oferecido para download. O ZIP contém a pasta `carinha_esp32` com o sketch, três headers e instruções de bibliotecas/placa/montagem. Nenhum original fora do repositório foi modificado.
+
+`npm run assets:face` regenera `preview.json`, o módulo TypeScript do sketch e o ZIP a partir desses arquivos locais, sem serviços ou dependências extras. A prévia carrega os bitmaps sob demanda; o bundle inicial não inclui os 226 quadros. O browser decodifica os mesmos bits (MSB primeiro), mostra branco/preto e respeita tempos, sequência e pausas. A reprodução começa pausada; movimento reduzido usa avanço manual. Os controles permitem selecionar expressão, pausar, avançar e reiniciar, sem execução de firmware.
+
+O hardware precisa da plataforma ESP32 da Espressif, Adafruit GFX Library, Adafruit ST7735 and ST7789 Library e suas dependências, instaladas pela IDE Arduino. O firmware não foi compilado com a toolchain Arduino nem testado em hardware nesta sessão. O SVG do display e os primeiros quadros das três expressões foram renderizados e inspecionados visualmente.
+
 ## Verificações e limites
 
-25 testes automatizados cobrem o motor, validação de terminais, posicionamento das pernas, redes da protoboard, contatos do botão abertos e fechados, debounce, respostas, limites de navegação, persistência e reinício independente por aula. TypeScript, ESLint e build de produção foram executados. As rotas inicial e das aulas são verificadas com HTTP 200; IDs inexistentes retornam 404.
+35 testes automatizados cobrem o motor, validação de terminais, posicionamento das pernas, redes da protoboard, contatos do botão abertos e fechados, debounce, bitmaps originais, ordem e tempo dos quadros, ZIP/downloads, respostas, limites de navegação, persistência e reinício independente por aula. TypeScript, ESLint e build de produção foram executados. As rotas inicial e das aulas são verificadas com HTTP 200; IDs inexistentes retornam 404.
 
 A revisão visual em navegador não foi realizada nesta sessão, pois não havia navegador conectado. O layout inclui breakpoints para celular e tablet, mas precisa dessa conferência visual em dispositivos reais.
 

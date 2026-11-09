@@ -1,0 +1,55 @@
+ESP32 Lab - Projeto especial: Carinhas no LCD TFT
+
+1. Extraia o ZIP. Abra carinha_esp32/carinha_esp32.ino na IDE Arduino.
+2. Mantenha angry.h, content.h e laugh.h na mesma pasta do .ino.
+3. Instale a plataforma esp32 de Espressif Systems pelo Gerenciador de Placas.
+4. Pelo Gerenciador de Bibliotecas instale Adafruit GFX Library e
+   Adafruit ST7735 and ST7789 Library. Aceite suas dependencias, como Adafruit BusIO.
+5. Selecione a placa ESP32 Dev Module (ESP32 classico) e a porta correta.
+6. Com a alimentacao desconectada, confira as ligacoes pelo nome de cada sinal.
+
+Modulo informado pelo usuario: LCD TFT ST7735S de 1,8 polegada, 128x160,
+SPI, anunciado para alimentacao de 3,3 V/5 V. Nesta montagem usamos VCC
+em 3,3 V e sinais logicos em 3,3 V. A descricao comercial nao identifica
+o fabricante, a ordem dos pinos nem o circuito do backlight.
+Alimentacao compativel com 5 V nao autoriza aplicar 5 V aos GPIOs do ESP32.
+
+ESP32 -> ST7735S
+3V3   -> VCC (opcao de 3,3 V do modulo informado como 3,3 V/5 V)
+GND   -> GND
+18    -> SCK / SCL / CLK (clock SPI, nao I2C)
+23    -> SDA / DIN / MOSI (dados SPI, nao I2C)
+5     -> CS
+2     -> DC / A0
+4     -> RES / RST
+MISO  -> sem ligacao (nao usamos leitura do display ou cartao SD)
+BL/LED/LITE -> depende do modulo. O desenho nao prescreve uma ligacao
+generica. Confira tensao, limitacao de corrente e controle no datasheet.
+Nao ligue um LED de backlight sem limitacao diretamente a um GPIO.
+O perfil ilustrado pressupoe um modulo com backlight habilitado na placa.
+
+GPIO 2 e GPIO 5 sao pinos de strapping no ESP32 classico. Mantivemos os
+pinos do sketch original. Modulos externos nao devem impor niveis de boot
+incompativeis. Se a placa nao iniciar, desconecte o display e revise o modulo.
+
+Ajustes em relacao ao sketch fornecido:
+- Removida a sequencia de sinais + soltos no final, que invalida o C++.
+- SPI.begin explicita SCK=18 e MOSI=23 para o ESP32 classico.
+- SPI reduzido de 40 MHz para 16 MHz como ponto de partida; adapte ao modulo.
+- As tres funcoes de reproducao foram reunidas em tocarAnimacao.
+- static_assert garante que os tres arquivos continuam sendo 128x64.
+- Os tres headers foram copiados sem alteracao.
+
+Tela 128x160 na rotacao 0. Bitmaps 128x64 em x=0, y=48.
+CONTENT: 76 quadros; LAUGH: 75; ANGRY: 75. Cada quadro possui 1024 bytes,
+com bit mais significativo primeiro; os delays fornecidos sao 100 ms.
+O buffer RGB565 ocupa 16384 bytes de RAM. Os bitmaps ficam em PROGMEM.
+A ordem se repete: content, pausa 500 ms, laugh, pausa 500 ms, angry,
+pausa 1000 ms. As pausas mantem o ultimo quadro de cada expressao.
+
+Se a tela ficar branca ou deslocada, confira fios, GND, backlight, driver,
+resolucao e variante INITR_BLACKTAB do seu modulo. Nunca escolha a variante
+apenas pela cor da placa. Teste o exemplo graphicstest da biblioteca.
+
+A previa no site decodifica os mesmos quadros e tempos, mas nao executa
+firmware nem simula comunicacao SPI. Nao foi feito teste em hardware nesta sessao.

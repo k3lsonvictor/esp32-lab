@@ -1,4 +1,147 @@
 @import "tailwindcss";
+.special-card {
+  border-color: #d6bc8e;
+  background: #fffaf0;
+}
+.special-card .card-number {
+  color: #a27636;
+  background: #f0e4ca;
+}
+.special-card .badge {
+  color: #91662b;
+  background: #f0e4ca;
+}
+.face-demo {
+  padding: 20px 24px;
+  background: #f6f4e9;
+  border-top: 1px solid var(--line);
+}
+.face-demo > p:not(.eyebrow) {
+  margin: 12px 0 0;
+  font-size: 10px;
+  line-height: 1.7;
+  color: #6d7b70;
+}
+.face-expressions,
+.face-controls {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+.face-expressions {
+  margin-bottom: 15px;
+}
+.face-expressions button {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 11px 17px;
+  background: #fdfcf7;
+}
+.face-expressions button[aria-pressed="true"] {
+  background: #e5ecd9;
+  border-color: #789569;
+}
+.face-expressions small {
+  font-size: 9px;
+  font-weight: 400;
+  opacity: 0.75;
+}
+.face-controls button {
+  font-size: 10px;
+  padding: 12px;
+}
+.face-controls .text-button {
+  padding: 10px 0;
+}
+.face-caption {
+  font-variant-numeric: tabular-nums;
+}
+.wiring-table {
+  overflow-x: auto;
+  margin: 18px 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.wiring-table table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 10px;
+}
+.wiring-table caption {
+  text-align: left;
+  font-weight: 700;
+  padding: 12px;
+  background: #edf0e4;
+}
+.wiring-table th,
+.wiring-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid #e6e8dc;
+}
+.project-files {
+  margin: 32px 0 45px;
+  padding-top: 25px;
+  border-top: 1px solid var(--line);
+}
+.project-files h2 {
+  font-size: 23px;
+  margin-bottom: 12px;
+}
+.project-files > p:not(.eyebrow) {
+  font-size: 12px;
+  line-height: 1.8;
+  color: #6d7b70;
+  max-width: 850px;
+}
+.project-file-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+.project-file {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fcfcf7;
+}
+.project-file.featured {
+  background: #e9eee1;
+  border-color: #bbcca9;
+  grid-column: 1/-1;
+}
+.project-file > span {
+  flex: 1;
+  min-width: 0;
+}
+.project-file strong {
+  display: block;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.project-file small {
+  display: block;
+  font-size: 10px;
+  color: #7d8778;
+  line-height: 1.6;
+  margin-top: 5px;
+}
+.project-file:hover {
+  border-color: #789569;
+}
+@media (max-width: 760px) {
+  .project-file-list {
+    grid-template-columns: 1fr;
+  }
+  .face-demo {
+    padding: 18px;
+  }
+}
 .catalog > .lesson-card + .lesson-card {
   margin-top: 18px;
 }

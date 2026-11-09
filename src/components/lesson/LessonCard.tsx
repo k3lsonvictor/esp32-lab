@@ -12,10 +12,13 @@ export function LessonCard({ lesson }: { lesson: Lesson }) {
     queueMicrotask(() => setReady(true));
   }, []);
   return (
-    <Link className="lesson-card" href={`/aprender/${lesson.id}`}>
+    <Link
+      className={`lesson-card${lesson.special ? " special-card" : ""}`}
+      href={`/aprender/${lesson.id}`}
+    >
       <div className="card-number">
-        {String(lesson.projectNumber).padStart(2, "0")}{" "}
-        <span>PROJETO GUIADO</span>
+        {lesson.special ? "✦" : String(lesson.projectNumber).padStart(2, "0")}{" "}
+        <span>{lesson.special ? "PROJETO ESPECIAL" : "PROJETO GUIADO"}</span>
       </div>
       <div>
         <span className="badge">{lesson.difficulty}</span>

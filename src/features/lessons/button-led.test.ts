@@ -44,8 +44,9 @@ describe("Segundo projeto: LED com botão", () => {
       "primeiro-led",
       "led-com-botao",
       "led-interruptor",
+      "carinha-lcd",
     ]);
-    expect(new Set(lessons.map((l) => l.projectNumber)).size).toBe(3);
+    expect(new Set(lessons.map((l) => l.projectNumber)).size).toBe(4);
     expect(lessonSchema.safeParse(lesson).success).toBe(true);
     expect(lesson.steps).toHaveLength(8);
     expect(lesson.projectNumber).toBe(2);

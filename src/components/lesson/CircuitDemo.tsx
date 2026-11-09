@@ -2,6 +2,7 @@
 import { useReducer, useEffect, type ComponentProps } from "react";
 import { Hand } from "lucide-react";
 import { CircuitCanvas } from "../circuit/CircuitCanvas";
+import { FaceCircuitDemo } from "./FaceCircuitDemo";
 import {
   DEBOUNCE_MS,
   initialButtonDemo,
@@ -10,9 +11,11 @@ import {
 
 export function CircuitDemo({
   interactive,
+  faceDemo,
   ...scene
 }: ComponentProps<typeof CircuitCanvas> & {
   interactive?: boolean | "toggle";
+  faceDemo?: boolean;
 }) {
   const [state, sample] = useReducer(sampleButton, initialButtonDemo);
   const pressed = state.rawPressed;
@@ -35,6 +38,7 @@ export function CircuitDemo({
     );
     return () => clearTimeout(timer);
   }, [toggle, state.rawPressed, state.stablePressed, state.changedAt]);
+  if (faceDemo) return <FaceCircuitDemo {...scene} />;
   return (
     <>
       <CircuitCanvas

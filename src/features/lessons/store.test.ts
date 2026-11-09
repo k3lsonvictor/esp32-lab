@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { blinkLesson as lesson } from "../../content/lessons/blink-led";
 import { buttonLesson } from "../../content/lessons/button-led";
 import { toggleLesson } from "../../content/lessons/toggle-led";
+import { faceLesson } from "../../content/lessons/face-lcd";
 const storage = new Map<string, string>();
 vi.stubGlobal("localStorage", {
   getItem: (k: string) => storage.get(k) ?? null,
@@ -24,6 +25,11 @@ describe("Persistência e ações de progresso", () => {
     s.answer(toggleLesson, "release", 1);
     s.answer(toggleLesson, "debounce", 2);
     s.finish(toggleLesson);
+    s.move(faceLesson, 9);
+    s.answer(faceLesson, "display-bus", 1);
+    s.answer(faceLesson, "frame-size", 0);
+    s.answer(faceLesson, "frame-time", 2);
+    s.finish(faceLesson);
     const saved = storage.get("esp32-lab-progress-v1")!;
     useLessonStore.setState({ progress: {} });
     storage.set("esp32-lab-progress-v1", saved);
@@ -32,6 +38,11 @@ describe("Persistência e ações de progresso", () => {
       true,
     );
     useLessonStore.getState().reset(buttonLesson.id);
+    expect(useLessonStore.getState().progress[faceLesson.id]).toEqual({
+      step: 9,
+      answers: { "display-bus": 1, "frame-size": 0, "frame-time": 2 },
+      completed: true,
+    });
     expect(useLessonStore.getState().progress[toggleLesson.id]).toEqual({
       step: 7,
       answers: { release: 1, debounce: 2 },

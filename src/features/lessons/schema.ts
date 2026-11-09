@@ -16,6 +16,28 @@ export const lessonSchema = z
     description: z.string(),
     difficulty: z.string(),
     projectNumber: z.number().int().positive().default(1),
+    special: z.boolean().default(false),
+    downloads: z
+      .array(
+        z.object({
+          title: z.string(),
+          href: z
+            .string()
+            .regex(/^\/projetos\/[a-z0-9-]+\/[a-zA-Z0-9_.-]+\.(zip|ino|h)$/),
+          filename: z.string(),
+          description: z.string(),
+        }),
+      )
+      .optional(),
+    wiring: z
+      .array(
+        z.object({
+          signal: z.string(),
+          board: z.string(),
+          display: z.string(),
+        }),
+      )
+      .optional(),
     durationMinutes: z.number().int().positive().default(15),
     completion: z.object({ title: z.string(), text: z.string() }).optional(),
     materials: z
@@ -33,7 +55,14 @@ export const lessonSchema = z
     components: z.array(
       z.object({
         id: z.string(),
-        kind: z.enum(["esp32", "breadboard", "led", "resistor", "button"]),
+        kind: z.enum([
+          "esp32",
+          "breadboard",
+          "led",
+          "resistor",
+          "button",
+          "tft",
+        ]),
         x: z.number(),
         y: z.number(),
       }),
@@ -61,6 +90,8 @@ export const lessonSchema = z
           questions: z.array(question).optional(),
           blink: z.boolean().optional(),
           buttonDemo: z.union([z.boolean(), z.literal("toggle")]).optional(),
+          faceDemo: z.boolean().optional(),
+          showWiring: z.boolean().optional(),
         }),
       )
       .min(1),
@@ -84,6 +115,17 @@ export const lessonSchema = z
       }
     }
     for (const s of lesson.steps) {
+      if (
+        s.faceDemo &&
+        (!lesson.components.some(
+          (p) => p.kind === "tft" && s.visible.includes(p.id),
+        ) ||
+          s.buttonDemo ||
+          s.blink)
+      )
+        issue(
+          "Prévia de carinhas requer TFT visível e não pode ser combinada com outra demonstração",
+        );
       if (
         s.buttonDemo &&
         (!["button", "led"].every((kind) =>
