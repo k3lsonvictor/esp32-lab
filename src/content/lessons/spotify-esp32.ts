@@ -72,7 +72,7 @@ const displayWires = displayWiring.map(({ id }) => id);
 const buttonWires = buttons.flatMap(({ id }) => [id, `${id}-ground`]);
 const assembly = {
   visible: ["esp32", "display", ...buttons.map(({ id }) => id)],
-  wires: [],
+  wires: [...displayWires, ...buttonWires],
   highlight: [],
 };
 
