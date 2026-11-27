@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 export const metadata: Metadata = {
   title: "ESP32 Lab — Aprenda fazendo",
@@ -11,7 +12,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body>{children}</body>
+      <body>
+        {children}
+        {process.env.VERCEL_ENV === "production" && <Analytics />}
+      </body>
     </html>
   );
 }
