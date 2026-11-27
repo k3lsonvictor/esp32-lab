@@ -9,7 +9,7 @@ export function WiringTable({ rows }: { rows: Lesson["wiring"] }) {
           <tr>
             <th scope="col">Sinal</th>
             <th scope="col">ESP32</th>
-            <th scope="col">Display</th>
+            <th scope="col">Destino</th>
           </tr>
         </thead>
         <tbody>

@@ -1,0 +1,8 @@
+{
+  "name": "esp32-spotify-player",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Servidor local para player ESP32 com capa de album",
+  "scripts": { "start": "node server.mjs" },
+  "dependencies": { "sharp": "^0.34.0" }
+}

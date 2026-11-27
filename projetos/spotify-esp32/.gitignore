@@ -1,0 +1,4 @@
+node_modules/
+ESP32_Spotify_Player/config.h
+servidor/config.json
+servidor/tokens*.json

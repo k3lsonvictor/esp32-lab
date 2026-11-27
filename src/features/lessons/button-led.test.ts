@@ -45,8 +45,9 @@ describe("Segundo projeto: LED com botão", () => {
       "led-com-botao",
       "led-interruptor",
       "carinha-lcd",
+      "spotify-esp32",
     ]);
-    expect(new Set(lessons.map((l) => l.projectNumber)).size).toBe(4);
+    expect(new Set(lessons.map((l) => l.projectNumber)).size).toBe(lessons.length);
     expect(lessonSchema.safeParse(lesson).success).toBe(true);
     expect(lesson.steps).toHaveLength(8);
     expect(lesson.projectNumber).toBe(2);

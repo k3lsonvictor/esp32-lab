@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-Abra http://localhost:3000. Aulas: `/aprender/primeiro-led`, `/aprender/led-com-botao`, `/aprender/led-interruptor` e o projeto especial `/aprender/carinha-lcd`.
+Abra http://localhost:3000 para acessar o catálogo de aulas. O [Projeto 05](/aprender/spotify-esp32) ensina a controlar o Spotify com um ESP32. O [guia de bancada](projetos/spotify-esp32/README.md) explica como configurar o firmware e o servidor local na porta 3001.
 
 ```sh
 npm run lint

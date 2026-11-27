@@ -1,0 +1,5 @@
+{
+  "clientId": "PREENCHA_CLIENT_ID",
+  "clientSecret": "PREENCHA_CLIENT_SECRET",
+  "deviceKey": "PREENCHA_CHAVE_DO_ESP32"
+}
