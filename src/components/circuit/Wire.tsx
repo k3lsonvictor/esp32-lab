@@ -7,21 +7,28 @@ export function Wire({
   to,
   color,
   index,
+  via,
 }: {
   from: Point;
   to: Point;
   color: string;
   index: number;
+  via?: Point[];
 }) {
   const reduced = useReducedMotion();
   return (
     <g>
       <motion.path
-        d={wirePath(from, to, index * 15)}
+        d={
+          via?.length
+            ? `M ${[from, ...via, to].map(({ x, y }) => `${x} ${y}`).join(" L ")}`
+            : wirePath(from, to, index * 15)
+        }
         fill="none"
         stroke={color}
         strokeWidth="5"
         strokeLinecap="round"
+        strokeLinejoin="round"
         initial={{ pathLength: reduced ? 1 : 0 }}
         animate={{ pathLength: 1 }}
         transition={{

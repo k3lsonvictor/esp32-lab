@@ -73,6 +73,7 @@ export const lessonSchema = z
         from: z.string(),
         to: z.string(),
         color: z.string(),
+        via: z.array(z.object({ x: z.number(), y: z.number() })).optional(),
       }),
     ),
     steps: z

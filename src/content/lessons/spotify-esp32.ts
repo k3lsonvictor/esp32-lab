@@ -57,24 +57,22 @@ const buttons = [
     pin: "GPIO25",
     label: "Anterior",
     color: "#a68138",
-    x: 335,
+    y: 243,
   },
-  { id: "next", pin: "GPIO26", label: "Próxima", color: "#47958b", x: 465 },
+  { id: "next", pin: "GPIO26", label: "Próxima", color: "#47958b", y: 325 },
   {
     id: "toggle",
     pin: "GPIO27",
     label: "Play/pause",
     color: "#9c74b3",
-    x: 595,
+    y: 407,
   },
 ];
 const displayWires = displayWiring.map(({ id }) => id);
-const completeCircuit = {
+const buttonWires = buttons.flatMap(({ id }) => [id, `${id}-ground`]);
+const assembly = {
   visible: ["esp32", "display", ...buttons.map(({ id }) => id)],
-  wires: [
-    ...displayWires,
-    ...buttons.flatMap(({ id }) => [id, `${id}-ground`]),
-  ],
+  wires: [],
   highlight: [],
 };
 
@@ -92,9 +90,9 @@ export const spotifyLesson = lessonSchema.parse({
     text: "Você ligou o TFT por SPI, montou os botões com pull-up e acompanhou o caminho dos dados entre o Spotify, o servidor local e o ESP32.",
   },
   components: [
-    { id: "esp32", kind: "esp32", x: 90, y: 90 },
-    { id: "display", kind: "tft", x: 455, y: 65 },
-    ...buttons.map(({ id, x }) => ({ id, kind: "button", x, y: 440 })),
+    { id: "esp32", kind: "esp32", x: 240, y: 90 },
+    { id: "display", kind: "tft", x: 530, y: 65 },
+    ...buttons.map(({ id, y }) => ({ id, kind: "button", x: 90, y })),
   ],
   connections: [
     ...displayWiring.map(({ id, pin, terminal, color }) => ({
@@ -103,15 +101,28 @@ export const spotifyLesson = lessonSchema.parse({
       to: `display.${terminal}`,
       color,
     })),
-    ...buttons.flatMap(({ id, pin, color }) => [
-      { id, from: `esp32.${pin}`, to: `${id}.a1`, color },
-      {
+    ...buttons.map(({ id, pin, color }) => ({
+      id,
+      from: `esp32.${pin}`,
+      to: `${id}.b1`,
+      color,
+    })),
+    ...buttons.map(({ id, y }, index) => {
+      const lane = 42 + index * 12;
+      const bottom = 495 - index * 10;
+      return {
         id: `${id}-ground`,
         from: "esp32.GND_LEFT",
-        to: `${id}.b1`,
+        to: `${id}.a2`,
         color: "#334155",
-      },
-    ]),
+        via: [
+          { x: 205, y: 395 },
+          { x: 205 - index * 13, y: bottom },
+          { x: lane, y: bottom },
+          { x: lane, y: y + 40 },
+        ],
+      };
+    }),
   ],
   wiring: [
     ...displayWiring.map(({ label, pin, terminal }) => ({
@@ -140,7 +151,7 @@ export const spotifyLesson = lessonSchema.parse({
       title: "A faixa do Spotify na tela do ESP32",
       text: "Separe um ESP32 clássico, um TFT ST7735 de 128 × 160, três botões momentâneos e jumpers. O celular ou computador continua reproduzindo o áudio enquanto o ESP32 mostra a faixa e envia comandos.",
       tip: "O computador executa um servidor Node.js na mesma rede local do ESP32. Ele guarda a autorização do Spotify e prepara a capa para o display.",
-      visible: completeCircuit.visible,
+      visible: assembly.visible,
       wires: [],
       highlight: ["display"],
     },
@@ -152,13 +163,15 @@ export const spotifyLesson = lessonSchema.parse({
       visible: ["esp32", "display"],
       wires: displayWires,
       highlight: ["display"],
+      showWiring: true,
     },
     {
-      ...completeCircuit,
+      ...assembly,
+      wires: buttonWires,
       eyebrow: "Controles físicos",
       title: "Adicione os três botões",
       text: "Ligue os botões aos GPIOs 25 (anterior), 26 (próxima) e 27 (play/pause). Leve o outro contato elétrico de cada botão ao GND.",
-      tip: "Com INPUT_PULLUP, o pino lê HIGH em repouso e LOW quando o botão fecha contato com o GND.",
+      tip: "Nesta etapa, o diagrama mostra os fios dos botões. Com INPUT_PULLUP, o pino lê HIGH em repouso e LOW quando o botão fecha contato com o GND.",
       showWiring: true,
       code: [
         "pinMode(BTN_ANTERIOR, INPUT_PULLUP);",
@@ -167,21 +180,22 @@ export const spotifyLesson = lessonSchema.parse({
       ].join("\n"),
     },
     {
-      ...completeCircuit,
+      ...assembly,
       eyebrow: "Servidor local",
       title: "Autorize sua conta do Spotify",
       text: "Extraia o ZIP e siga o README. Cadastre http://127.0.0.1:3001/callback no app do Spotify, preencha o config.json a partir do exemplo e rode npm ci e npm start na pasta servidor. Abra http://127.0.0.1:3001/login nesse computador.",
       tip: "Use uma conta Spotify Premium para os controles e mantenha o Client Secret e os tokens no computador. O ESP32 usa a chave do dispositivo para falar com o servidor.",
     },
     {
-      ...completeCircuit,
+      ...assembly,
+      showWiring: true,
       eyebrow: "Arduino IDE",
       title: "Envie o sketch e teste a reprodução",
       text: "Instale ArduinoJson 7, Adafruit GFX e Adafruit ST7735 and ST7789. Crie config.h a partir do exemplo, configure o Wi-Fi, o IP local do computador na porta 3001 e a mesma chave do servidor. Envie o sketch e coloque uma faixa para tocar no Spotify.",
       tip: "Acompanhe o Monitor Serial a 115200 baud. O servidor entrega a capa em RGB565, com 52 × 52 pixels e 5.408 bytes. Teste anterior, próxima e play/pause.",
     },
     {
-      ...completeCircuit,
+      ...assembly,
       eyebrow: "Revisão",
       title: "Identifique quem faz cada parte",
       text: "Revise a arquitetura antes de levar o projeto para a bancada.",

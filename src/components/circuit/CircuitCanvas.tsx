@@ -82,6 +82,7 @@ export function CircuitCanvas({
           from={terminalPosition(parts, wire.from)}
           to={terminalPosition(parts, wire.to)}
           color={wire.color}
+          via={wire.via}
           index={i}
         />
       ))}
