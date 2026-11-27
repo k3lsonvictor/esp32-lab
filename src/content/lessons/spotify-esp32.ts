@@ -94,7 +94,7 @@ export const spotifyLesson = lessonSchema.parse({
   components: [
     { id: "esp32", kind: "esp32", x: 90, y: 90 },
     { id: "display", kind: "tft", x: 455, y: 65 },
-    ...buttons.map(({ id, x }) => ({ id, kind: "button", x, y: 390 })),
+    ...buttons.map(({ id, x }) => ({ id, kind: "button", x, y: 440 })),
   ],
   connections: [
     ...displayWiring.map(({ id, pin, terminal, color }) => ({
