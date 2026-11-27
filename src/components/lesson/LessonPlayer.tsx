@@ -24,6 +24,10 @@ import { QuizStep } from "./QuizStep";
 import { SupplementaryMaterials } from "./SupplementaryMaterials";
 import { ProjectFiles } from "./ProjectFiles";
 import { WiringTable } from "./WiringTable";
+
+// Prevent Firefox from restoring a button's disabled state before hydration.
+const navigationButtonAttributes = { autoComplete: "off" };
+
 export function LessonPlayer({ lesson }: { lesson: Lesson }) {
   const store = useLessonStore();
   const [ready, setReady] = useState(false);
@@ -179,6 +183,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
             </div>
             <nav className="step-navigation" aria-label="Navegação da aula">
               <button
+                {...navigationButtonAttributes}
                 className="secondary"
                 disabled={index === 0}
                 onClick={() => store.move(lesson, -1)}
@@ -200,6 +205,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
               </div>
               {index < lesson.steps.length - 1 ? (
                 <button
+                  {...navigationButtonAttributes}
                   className="primary"
                   onClick={() => store.move(lesson, 1)}
                 >
@@ -207,6 +213,7 @@ export function LessonPlayer({ lesson }: { lesson: Lesson }) {
                 </button>
               ) : (
                 <button
+                  {...navigationButtonAttributes}
                   className="primary"
                   disabled={!canComplete(lesson, progress?.answers ?? {})}
                   onClick={() => store.finish(lesson)}
